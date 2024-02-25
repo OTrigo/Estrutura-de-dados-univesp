@@ -11,7 +11,7 @@ typedef struct
 
 typedef struct
 {
-  REGISTRO registros[MAX];
+  REGISTRO registros[MAX + 1];
   int nroElem;
 } LISTA;
 
@@ -48,6 +48,18 @@ int buscaSequencial(LISTA *lista, TIPOCHAVE chave)
   return -1;
 }
 
+int buscaSentinela(LISTA *lista, TIPOCHAVE chave)
+{
+  int i = 0;
+  lista->registros[lista->nroElem].chave = chave;
+  while (lista->registros[i].chave != chave)
+    i++;
+  if (i == lista->nroElem)
+    return -1;
+  else
+    return i;
+}
+
 bool inserirElemLista(LISTA *lista, REGISTRO registro, int indice)
 {
   int j;
@@ -63,8 +75,42 @@ bool inserirElemLista(LISTA *lista, REGISTRO registro, int indice)
   return true;
 }
 
+bool inserirElemListaOrdenada(LISTA *lista, REGISTRO registro)
+{
+  if (lista->nroElem >= MAX)
+    return false;
+  int pos = lista->nroElem;
+  while (pos > 0 && lista->registros[pos - 1].chave > registro.chave)
+  {
+    lista->registros[pos] = lista->registros[pos - 1];
+    pos--;
+  }
+  lista->registros[pos] = registro;
+  lista->nroElem++;
+}
+
+int buscaBinaria(LISTA *lista, TIPOCHAVE chave)
+{
+  int esquerda, direita, meio;
+  esquerda = 0;
+  direita = lista->nroElem - 1;
+  while (esquerda <= direita)
+  {
+    meio = ((esquerda + direita) / 2);
+    if (lista->registros[meio].chave == chave)
+      return meio;
+    else
+    {
+      if (lista->registros[meio].chave < chave)
+        esquerda = meio + 1;
+      else
+        direita = meio - 1;
+    }
+  }
+  return -1;
+}
+
 int main()
 {
-
   return 0;
 }
